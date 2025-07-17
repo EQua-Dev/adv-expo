@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "SID-address-verification"
 include(":app")
- 
+include(":sid-address-verification")
