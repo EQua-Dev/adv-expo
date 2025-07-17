@@ -4,7 +4,9 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.POST
 import tech.sourceid.sid_address_verification.data.requests.AddGeoTagRequest
+import tech.sourceid.sid_address_verification.data.responses.AddGeoTagResponse
 import tech.sourceid.sid_address_verification.data.responses.CustomerAddressHistoryResponse
 import tech.sourceid.sid_address_verification.data.responses.GetOrganisationConfigResponse
 
@@ -23,10 +25,10 @@ interface ApiService {
         @Header("x-api-key") apiKey: String,
     ): Response<CustomerAddressHistoryResponse>
 
-    @GET("customer/add-geotag")
+    @POST("customer/add-geotag")
     suspend fun addGeoTag(
         @Header("x-auth-token") token: String,
         @Header("x-api-key") apiKey: String,
         @Body postBody: AddGeoTagRequest
-    ): Response<CustomerAddressHistoryResponse>
+    ): Response<AddGeoTagResponse>
 }

@@ -2,6 +2,7 @@ package tech.sourceid.sid_address_verification.domain
 
 import retrofit2.Response
 import tech.sourceid.sid_address_verification.data.requests.AddGeoTagRequest
+import tech.sourceid.sid_address_verification.data.responses.AddGeoTagResponse
 import tech.sourceid.sid_address_verification.data.responses.CustomerAddressHistoryResponse
 import tech.sourceid.sid_address_verification.data.responses.GetOrganisationConfigResponse
 import tech.sourceid.sid_address_verification.services.ApiService
@@ -25,7 +26,7 @@ class ApiHelper(private val apiService: ApiService) {
         apiKey: String,
         token: String,
         request: AddGeoTagRequest
-    ): Response<CustomerAddressHistoryResponse> {
+    ): Response<AddGeoTagResponse> {
         return apiService.addGeoTag(token = token, apiKey = apiKey, postBody = request)
     }
 

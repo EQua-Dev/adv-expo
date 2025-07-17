@@ -64,7 +64,10 @@ class LocationForegroundService : Service() {
             ) == PackageManager.PERMISSION_GRANTED
 
             if (!hasForegroundServicePermission) {
-                Log.e("LocationService", "Missing FOREGROUND_SERVICE_LOCATION permission on Android 14+")
+                Log.e(
+                    "LocationService",
+                    "Missing FOREGROUND_SERVICE_LOCATION permission on Android 14+"
+                )
                 stopSelf()
                 return START_NOT_STICKY
             }
@@ -153,36 +156,55 @@ class LocationForegroundService : Service() {
                                 it.longitude
                             )
 
+                            Log.d("LocationService", "Parsed address: $parsedAddress")
+
+                            val address = listOfNotNull(
+                                parsedAddress.addressLineOne,
+                                parsedAddress.addressLineTwo
+                            ).joinToString(" ").ifBlank { "Unknown Location" }
+
+
                             val geoTag = AddGeoTagRequest(
-                                address = "${parsedAddress.addressLineOne} ${parsedAddress.addressLineTwo}",
+                                address = address,
                                 latitude = it.latitude,
                                 longitude = it.longitude
                             )
+                            try {
+                                val response = apiHelper.addGeoTag(apiKey, token, geoTag)
 
-                            val response = apiHelper.addGeoTag(apiKey, token, geoTag)
+                                if (response.isSuccessful) {
+                                    Log.d("LocationService", "Location sent successfully")
+                                } else {
+                                    Log.e(
+                                        "LocationService",
+                                        "Failed to send location: ${response.code()} - ${
+                                            response.errorBody()?.string()
+                                        }"
+                                    )
+                                }
 
-                            if (response.isSuccessful) {
-                                Log.d("LocationService", "Location sent successfully")
-                            } else {
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        this@LocationForegroundService,
+                                        "Location sent: ${it.latitude}, ${it.longitude}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            } catch (e: Exception) {
                                 Log.e(
                                     "LocationService",
-                                    "Failed to send location: ${response.code()}"
+                                    "Error while sending location to server",
+                                    e
                                 )
                             }
 
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(
-                                    this@LocationForegroundService,
-                                    "Location sent: ${it.latitude}, ${it.longitude}",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
                         }
                     }
                 }
 
             } catch (e: Exception) {
-                e.printStackTrace()
+                Log.e("LocationService", "Unhandled exception", e)
+
             }
 
             stopSelf() // stop service after duration
