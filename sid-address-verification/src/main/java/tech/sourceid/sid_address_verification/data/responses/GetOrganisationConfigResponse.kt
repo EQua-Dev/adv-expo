@@ -8,7 +8,7 @@ data class GetOrganisationConfigResponse(
 )
 
 data class OrganisationConfigData(
-    val distanceTolerance: Int,
+    val distanceTolerance: Double,
     val geotaggingPollingInterval: Double,
     val geotaggingSessionTimeout: Int
 )

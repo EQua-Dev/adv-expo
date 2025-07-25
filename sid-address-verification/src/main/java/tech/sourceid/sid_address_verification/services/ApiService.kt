@@ -6,9 +6,11 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import tech.sourceid.sid_address_verification.data.requests.AddGeoTagRequest
+import tech.sourceid.sid_address_verification.data.requests.RefreshTokenRequest
 import tech.sourceid.sid_address_verification.data.responses.AddGeoTagResponse
 import tech.sourceid.sid_address_verification.data.responses.CustomerAddressHistoryResponse
 import tech.sourceid.sid_address_verification.data.responses.GetOrganisationConfigResponse
+import tech.sourceid.sid_address_verification.data.responses.RefreshTokenResponse
 
 interface ApiService {
 
@@ -31,4 +33,10 @@ interface ApiService {
         @Header("x-api-key") apiKey: String,
         @Body postBody: AddGeoTagRequest
     ): Response<AddGeoTagResponse>
+
+    @POST("customer/refresh-token")
+    suspend fun refreshToken(
+        @Header("x-api-key") apiKey: String,
+        @Body postBody: RefreshTokenRequest
+    ): Response<RefreshTokenResponse>
 }

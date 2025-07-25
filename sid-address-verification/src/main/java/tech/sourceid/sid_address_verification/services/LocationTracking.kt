@@ -20,35 +20,16 @@ fun startLocationTracking(
     customerID: String,
     apiKey: String,
     token: String,
+    refreshToken: String,
     onLocationPost: (Double, Double) -> Unit
 ) {
-/*
-    val intent = Intent(context, LocationForegroundService::class.java)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        context.startForegroundService(intent)
-    } else {
-        context.startService(intent)
-    }
-    val fusedLocationClient = LocationServices.getFusedLocationProviderClient(context)
-
-    CoroutineScope(Dispatchers.IO).launch {
-        val repeatCount = duration / interval
-        repeat(repeatCount.toInt()) {
-            fusedLocationClient.lastLocation
-                .addOnSuccessListener { location: Location? ->
-                    location?.let {
-                        onLocationPost(it.latitude, it.longitude)
-                    }
-                }
-            delay(interval * 60 * 1000) // convert minutes to milliseconds
-        }
-    }*/
     val intent = Intent(context, LocationForegroundService::class.java).apply {
         putExtra("interval", interval)
         putExtra("duration", duration)
         putExtra("customer", customerID)
         putExtra("apiKey", apiKey)
         putExtra("token", token)
+        putExtra("refreshToken", refreshToken)
     }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

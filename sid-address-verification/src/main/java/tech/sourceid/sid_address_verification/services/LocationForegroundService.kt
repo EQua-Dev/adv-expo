@@ -23,31 +23,32 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
-import android.location.Geocoder
-import android.location.Address
-import android.net.ConnectivityManager
 import androidx.annotation.RequiresApi
-import androidx.annotation.RequiresPermission
 import tech.sourceid.sid_address_verification.R
 import tech.sourceid.sid_address_verification.data.requests.AddGeoTagRequest
 import tech.sourceid.sid_address_verification.domain.ApiHelper
 import java.time.Instant
-import java.util.Locale
 import androidx.core.content.edit
 import tech.sourceid.sid_address_verification.domain.cacheGeoTag
 import tech.sourceid.sid_address_verification.domain.clearCachedGeoTags
 import tech.sourceid.sid_address_verification.domain.getCachedGeoTags
+import tech.sourceid.sid_address_verification.services.tokenmanager.TokenManager
+import tech.sourceid.sid_address_verification.utils.HelpMe.getParsedAddressFromCoordinates
+import tech.sourceid.sid_address_verification.utils.HelpMe.isInternetAvailable
 import java.time.format.DateTimeFormatter
 
 
 class LocationForegroundService : Service() {
 
-    val apiHelper = ApiHelper(RetrofitBuilder.apiService)
+    private val apiHelper = ApiHelper(RetrofitBuilder.apiService)
+    private val tokenManager = TokenManager(this)
 
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private var job: Job? = null
     val client = OkHttpClient()
+
+    override fun onBind(intent: Intent?): IBinder? = null
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -56,12 +57,19 @@ class LocationForegroundService : Service() {
         val apiKey = intent?.getStringExtra("apiKey") ?: ""
         val customerID = intent?.getStringExtra("customer") ?: ""
         val token = intent?.getStringExtra("token") ?: ""
+        val refreshToken = intent?.getStringExtra("refreshToken") ?: ""
 
         val prefs = this.getSharedPreferences("GeoPrefs", Context.MODE_PRIVATE)
         prefs.edit {
             putString("apiKey", apiKey).putString("token", token)
+                .putString("refreshToken", refreshToken)
                 .putString("customerID", customerID)
         }
+
+        tokenManager.saveAccessToken(token)
+        tokenManager.saveRefreshToken(refreshToken)
+        tokenManager.saveApiKey(apiKey)
+        tokenManager.saveCustomerID(customerID)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             val hasForegroundServicePermission = ActivityCompat.checkSelfPermission(
@@ -85,9 +93,13 @@ class LocationForegroundService : Service() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         job = CoroutineScope(Dispatchers.IO).launch {
+            val cachedApiKey = tokenManager.getApiKey() ?: apiKey
+            val cachedAccessToken = tokenManager.getAccessToken() ?: token
+            val cachedCustomerID = tokenManager.getCustomerID() ?: customerID
             try {
                 // 1. Fetch customer address history
-                val historyResponse = apiHelper.fetchCustomerHistory(apiKey, token)
+                val historyResponse =
+                    apiHelper.fetchCustomerHistory(cachedApiKey, cachedAccessToken)
                 if (!historyResponse.isSuccessful || historyResponse.body() == null) {
                     Log.e("LocationService", "Failed to fetch customer location history")
                     stopSelf()
@@ -118,7 +130,7 @@ class LocationForegroundService : Service() {
                 Log.d("LocationService", "Using start time: $currentTime")
 
                 // 3. Fetch organisation config
-                val configResponse = apiHelper.fetchOrganisationConfig(apiKey)
+                val configResponse = apiHelper.fetchOrganisationConfig(cachedApiKey)
                 if (!configResponse.isSuccessful || configResponse.body() == null) {
                     Log.e("LocationService", "Failed to fetch org config")
                     stopSelf()
@@ -126,8 +138,8 @@ class LocationForegroundService : Service() {
                 }
 
                 val config = configResponse.body()!!.data
-//                val pollingIntervalHours = config.geotaggingPollingInterval // e.g. 2.5
-                val pollingIntervalHours = config.geotaggingPollingInterval / 285 // e.g. 2 minutes
+                val pollingIntervalHours = config.geotaggingPollingInterval // e.g. 2.5
+//                val pollingIntervalHours = config.geotaggingPollingInterval / 285 // e.g. 2 minutes
                 val sessionTimeoutDays = config.geotaggingSessionTimeout.toDouble() // e.g. 1.0
 
                 val intervalMs = (pollingIntervalHours * 60 * 60 * 1000).toLong()
@@ -226,10 +238,18 @@ class LocationForegroundService : Service() {
 
                                 // 2. Now send the current geoTag
                                 try {
-                                    val response = apiHelper.addGeoTag(apiKey, token, geoTag)
+                                    val response =
+                                        apiHelper.addGeoTag(cachedApiKey, cachedAccessToken, geoTag)
 
                                     if (response.isSuccessful) {
                                         Log.d("LocationService", "Location sent successfully")
+                                        withContext(Dispatchers.Main) {
+                                            Toast.makeText(
+                                                this@LocationForegroundService,
+                                                "Location sent: ${location.latitude}, ${location.longitude}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
                                     } else {
                                         Log.e(
                                             "LocationService",
@@ -254,13 +274,7 @@ class LocationForegroundService : Service() {
                                 Log.w("LocationService", "Offline, caching location")
                                 cacheGeoTag(this@LocationForegroundService, geoTag)
                             }
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(
-                                    this@LocationForegroundService,
-                                    "Location sent: ${location.latitude}, ${location.longitude}",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
+
                         }
                     }
                 }
@@ -303,56 +317,4 @@ class LocationForegroundService : Service() {
         super.onDestroy()
         job?.cancel()
     }
-
-    override fun onBind(intent: Intent?): IBinder? = null
-
-    @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
-    fun isInternetAvailable(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = connectivityManager.activeNetworkInfo
-        return activeNetwork != null && activeNetwork.isConnected
-    }
-
-    data class ParsedAddress(
-        val country: String? = null,
-        val addressLineOne: String? = null,
-        val addressLineTwo: String? = null,
-        val city: String? = null,
-        val region: String? = null,
-        val countryCode: String? = null,
-        val postalCode: String? = null,
-        val zipCode: String? = null
-    )
-
-
-    private fun getParsedAddressFromCoordinates(
-        context: Context,
-        latitude: Double,
-        longitude: Double
-    ): ParsedAddress {
-        val geocoder = Geocoder(context, Locale.getDefault())
-        return try {
-            val addresses: MutableList<Address>? = geocoder.getFromLocation(latitude, longitude, 1)
-            if (addresses?.isNotEmpty() == true) {
-                val address = addresses[0]
-                ParsedAddress(
-                    country = address.countryName,
-                    addressLineOne = address.subThoroughfare ?: address.featureName,
-                    addressLineTwo = address.thoroughfare ?: address.getAddressLine(0),
-                    city = address.locality ?: address.subAdminArea,
-                    region = address.adminArea,
-                    countryCode = address.countryCode,
-                    postalCode = address.postalCode,
-                    zipCode = address.postalCode // same as postalCode, used for clarity
-                )
-            } else {
-                ParsedAddress()
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            ParsedAddress()
-        }
-    }
-
 }
