@@ -105,7 +105,8 @@ fun AddressVerificationSDK(
                         onLocationPost = onLocationPost,
                         customerID = config.customerID,
                         apiKey = config.apiKey,
-                        token = config.token
+                        token = config.token,
+                        refreshToken = config.refreshToken
                     )
                 }
             }

@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class AddressVerificationConfig(
     val apiKey: String = "",
     val token: String = "",
+    val refreshToken: String = "",
     val customerID: String = "",
     val initialAddressText: String? = null,
     val locationFetchIntervalHours: Double = 0.5,

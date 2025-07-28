@@ -1,14 +1,13 @@
 package tech.sourceid.sid_address_verification.data.responses
 
-//@Serialzable
 data class CustomerAddressHistoryResponse(
-    val `data`: List<Data>,
+    val `data`: List<CustomerAddressHistoryData>,
     val message: String,
     val status: Boolean,
     val statusCode: Int
 )
 
-data class Data(
+data class CustomerAddressHistoryData(
     val _id: String,
     val artifact: String,
     val customer: String,

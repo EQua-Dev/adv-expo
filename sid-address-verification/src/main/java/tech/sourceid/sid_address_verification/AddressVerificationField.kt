@@ -64,6 +64,7 @@ fun AddressVerificationField(
     modifier: Modifier = Modifier,
     apiKey: String,
     token: String = "",
+    refreshToken: String = "",
     showButton: Boolean,
     initialText: String = "",
     verifyLocation: Boolean = false,
@@ -202,6 +203,7 @@ fun AddressVerificationField(
                                     customerID = customerID,
                                     apiKey = apiKey,
                                     token = token,
+                                    refreshToken = refreshToken,
                                     onLocationPost = onLocationPost
                                 )
                             }
