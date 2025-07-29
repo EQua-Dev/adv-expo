@@ -75,6 +75,7 @@ class LocationTracking(private val context: Context) {
         apiKey: String,
         token: String,
         customerID: String,
+        refreshToken: String,
         onLocationPost: (Double, Double) -> Unit
     ) {
         Log.d("AddressVerification", "startLocationTracking: internal second start tracking")
@@ -90,6 +91,7 @@ class LocationTracking(private val context: Context) {
                     interval = config.locationFetchIntervalHours ?: 0.5,
                     duration = config.locationFetchDurationDays ?: 1.0,
                     customerID = customerID,
+                    refreshToken = refreshToken,
                     onLocationPost = onLocationPost
                 )
 
@@ -111,6 +113,7 @@ class LocationTracking(private val context: Context) {
         interval: Double,
         duration: Double,
         customerID: String,
+        refreshToken: String,
         onLocationPost: (Double, Double) -> Unit
     ) {
 
@@ -121,6 +124,7 @@ class LocationTracking(private val context: Context) {
             putExtra("customer", customerID)
             putExtra("apiKey", apiKey)
             putExtra("token", token)
+            putExtra("refreshToken", refreshToken)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
