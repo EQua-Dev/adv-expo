@@ -39,12 +39,11 @@ class AddressVerification(private val context: Context) {
     fun startLocationTracking(
         apiKey: String,
         token: String,
-        customerID: String,
         refreshToken: String,
         onLocationPost: (Double, Double) -> Unit
     ) {
         Log.d("AddressVerification", "startLocationTracking: internal first start tracking")
-        locationTracking.startTracking(apiKey, token, customerID, refreshToken, onLocationPost)
+        locationTracking.startTracking(apiKey, token, refreshToken, onLocationPost)
     }
 
     fun stopLocationTracking() {

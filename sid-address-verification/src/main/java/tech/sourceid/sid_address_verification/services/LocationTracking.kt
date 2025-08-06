@@ -74,7 +74,6 @@ class LocationTracking(private val context: Context) {
     fun startTracking(
         apiKey: String,
         token: String,
-        customerID: String,
         refreshToken: String,
         onLocationPost: (Double, Double) -> Unit
     ) {
@@ -90,7 +89,6 @@ class LocationTracking(private val context: Context) {
                     token = token,
                     interval = config.locationFetchIntervalHours ?: 0.5,
                     duration = config.locationFetchDurationDays ?: 1.0,
-                    customerID = customerID,
                     refreshToken = refreshToken,
                     onLocationPost = onLocationPost
                 )
@@ -112,16 +110,13 @@ class LocationTracking(private val context: Context) {
         token: String,
         interval: Double,
         duration: Double,
-        customerID: String,
         refreshToken: String,
         onLocationPost: (Double, Double) -> Unit
     ) {
 
-        Log.d("LocationTracking", "startLocationTrackingInternal: $customerID")
         val intent = Intent(context, LocationForegroundService::class.java).apply {
             putExtra("interval", interval)
             putExtra("duration", duration)
-            putExtra("customer", customerID)
             putExtra("apiKey", apiKey)
             putExtra("token", token)
             putExtra("refreshToken", refreshToken)
