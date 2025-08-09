@@ -65,14 +65,16 @@ afterEvaluate {
         publications {
             create<MavenPublication>("release") {
                 from(components["release"])
-                groupId = "com.github.sourceidtechorg"
-                artifactId = "sid-address-verification-android"
-                version = "1.0.2"
+//                groupId = "com.github.sourceidtechorg"
+                groupId = "com.github.EQua-Dev"
+                artifactId = "adv-expo"
+                version = "1.0.1"
 
                 pom {
                     name.set("SIDAddressVerification")
                     description.set("A SourceID native Android library for verifying addresses using Google Places API and Location Services.")
-                    url.set("https://github.com/sourceidtechorg/sid-address-verification-android")
+//                    url.set("https://github.com/sourceidtechorg/sid-address-verification-android")
+                    url.set("https://github.com/EQua-Dev/adv-expo")
 
                     licenses {
                         license {
@@ -92,7 +94,8 @@ afterEvaluate {
                     scm {
                         connection.set("scm:git:git://github.com/sourceidtechorg/sid-address-verification-android.git")
                         developerConnection.set("scm:git:ssh://github.com/sourceidtechorg/sid-address-verification-android.git")
-                        url.set("https://github.com/sourceidtechorg/sid-address-verification-android")
+                        url.set("https://github.com/EQua-Dev/adv-expo")
+//                        url.set("https://github.com/sourceidtechorg/sid-address-verification-android")
                     }
                 }
             }
