@@ -68,7 +68,7 @@ afterEvaluate {
 //                groupId = "com.github.sourceidtechorg"
                 groupId = "com.github.EQua-Dev"
                 artifactId = "adv-expo"
-                version = "1.0.1"
+                version = "1.0.2"
 
                 pom {
                     name.set("SIDAddressVerification")
