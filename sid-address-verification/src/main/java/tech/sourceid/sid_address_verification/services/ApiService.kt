@@ -34,7 +34,7 @@ interface ApiService {
         @Body postBody: AddGeoTagRequest
     ): Response<AddGeoTagResponse>
 
-    @POST("customer/refresh-token")
+    @POST("auth/customer/refresh-token")
     suspend fun refreshToken(
         @Header("x-api-key") apiKey: String,
         @Body postBody: RefreshTokenRequest

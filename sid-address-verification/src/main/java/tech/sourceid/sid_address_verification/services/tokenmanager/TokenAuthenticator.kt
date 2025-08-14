@@ -1,5 +1,6 @@
 package tech.sourceid.sid_address_verification.services.tokenmanager
 
+import android.util.Log
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -42,8 +43,12 @@ class TokenAuthenticator(
                 )
             }
 
+            Log.d("Location", "refresh token api key: $apiKey")
+            Log.d("Location", "refresh token: $newTokenResponse")
+
             if (newTokenResponse.isSuccessful) {
                 val tokenData = newTokenResponse.body()?.data
+                Log.d("Location", "refresh token: $tokenData")
                 val newAccessToken = tokenData?.accessToken
                 val newRefreshToken = tokenData?.refreshToken
 

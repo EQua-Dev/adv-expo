@@ -42,7 +42,8 @@ class AddressVerification(private val context: Context) {
         refreshToken: String,
         onLocationPost: (Double, Double) -> Unit
     ) {
-        Log.d("AddressVerification", "startLocationTracking: internal first start tracking")
+        Log.d("AddressVerification", "startLocationTracking: internal first start tracking \n \"apiKey: $apiKey, refresh: $refreshToken,")
+        Log.d("AddressVerification", "apiKey: $apiKey, refresh: $refreshToken, token: $token")
         locationTracking.startTracking(apiKey, token, refreshToken, onLocationPost)
     }
 
@@ -185,7 +186,7 @@ fun AddressVerificationField(
                 )
             }
 
-            if (showButton){
+            if (showButton) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {

@@ -10,7 +10,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SIDaddressverification">
+        android:theme="@style/Theme.SIDaddressverification"
+        tools:replace="android:label">
         <activity
             android:name=".MainActivity"
             android:exported="true"
