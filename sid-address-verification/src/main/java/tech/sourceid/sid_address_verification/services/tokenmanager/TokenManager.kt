@@ -22,6 +22,7 @@ class TokenManager(context: Context) {
         private const val REFRESH_TOKEN = "refresh_token"
         private const val API_KEY = "api_key"
         private const val CUSTOMER_ID = "customer_id"
+        private const val VERIFICATION_GROUP_ID = "verification_group_id"
     }
 
 
@@ -95,6 +96,23 @@ class TokenManager(context: Context) {
     fun getCustomerID(): String? {
         val id = prefs.getString(CUSTOMER_ID, null)
         Log.d("TokenManager", "Customer ID retrieved: $id")
+        return id
+    }
+
+    fun saveVerificationGroupID(verificationGroupID: String) {
+        Log.d("TokenManager", "About to save verification group ID: $verificationGroupID")
+        try {
+            val editor = prefs.edit()
+            editor.putString(VERIFICATION_GROUP_ID, verificationGroupID)
+            val success = editor.commit()
+            Log.d("TokenManager", "Verification Group ID save result: $success, ID: $verificationGroupID")
+        } catch (e: Exception) {
+            Log.e("TokenManager", "Error saving verification group ID", e)
+        }
+    }
+    fun getVerificationGroupID(): String? {
+        val id = prefs.getString(VERIFICATION_GROUP_ID, null)
+        Log.d("TokenManager", "Verification Group ID retrieved: $id")
         return id
     }
 

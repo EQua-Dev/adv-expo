@@ -30,10 +30,12 @@ fun AddressVerificationTest() {
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OGZhNTcwMzU2ZDczNmRjOTcyY2RhNyIsIm9yZ2FuaXphdGlvbiI6IjY3Y2I2ODM5ODM2ZWYyNmNmZjVjZmVlYSIsImlhdCI6MTc1NTE4NDczMywiZXhwIjoxNzU3Nzc2NzMzfQ.VIfGSwcl6zzqKCvG0CZiqBBUyJQpZZoi-7R3uJpvyX4"
 
             val customerID = ""
+            val verificationGroupID = ""
 
             AddressVerification(context).startLocationTracking(
                 apiKey = apiKey,
-                customerID = customerID
+                customerID = customerID,
+                verificationGroupID = verificationGroupID
 //                token = token,
 //                refreshToken = refreshToken
             ) { lng, lat ->

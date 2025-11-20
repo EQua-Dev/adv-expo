@@ -20,8 +20,13 @@ class ApiHelper(private val apiService: ApiService) {
     suspend fun fetchCustomerHistory(
         apiKey: String,
         customerID: String,
+        verificationGroupId: String,
     ): Response<CustomerAddressHistoryResponse> {
-        return apiService.fetchCustomerHistory(customerID = customerID, apiKey = apiKey)
+        return apiService.fetchCustomerHistory(
+            customerID = customerID,
+            apiKey = apiKey,
+            verificationGroupId = verificationGroupId
+        )
     }
 
     suspend fun addGeoTag(
@@ -30,7 +35,7 @@ class ApiHelper(private val apiService: ApiService) {
 //        customerID: String,
         request: AddGeoTagRequest
     ): Response<AddGeoTagResponse> {
-        return apiService.addGeoTag( apiKey = apiKey, postBody = request)
+        return apiService.addGeoTag(apiKey = apiKey, postBody = request)
     }
 
     suspend fun refreshToken(

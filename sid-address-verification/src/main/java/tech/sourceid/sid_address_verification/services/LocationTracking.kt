@@ -75,6 +75,7 @@ class LocationTracking(private val context: Context) {
         apiKey: String,
 //        token: String,
         customerID: String,
+        verificationGroupID: String? = null,
 //        refreshToken: String,
         onLocationPost: (Double, Double) -> Unit
     ) {
@@ -89,6 +90,7 @@ class LocationTracking(private val context: Context) {
                     apiKey = apiKey,
 //                    token = token,
                     customerID = customerID,
+                    verificationGroupID = verificationGroupID,
                     interval = config.locationFetchIntervalHours ?: 0.5,
                     duration = config.locationFetchDurationDays ?: 1.0,
 //                    refreshToken = refreshToken,
@@ -111,6 +113,7 @@ class LocationTracking(private val context: Context) {
         apiKey: String,
 //        token: String,
         customerID: String,
+        verificationGroupID: String?,
         interval: Double,
         duration: Double,
 //        refreshToken: String,
@@ -123,6 +126,7 @@ class LocationTracking(private val context: Context) {
             putExtra("apiKey", apiKey)
 //            putExtra("token", token)
             putExtra("customerID", customerID)
+            putExtra("verificationGroupID", verificationGroupID)
 //            putExtra("refreshToken", refreshToken)
         }
 

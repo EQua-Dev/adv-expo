@@ -354,11 +354,16 @@ class LocationForegroundService : Service() {
     private fun saveTokensAndPreferences(intent: Intent?) {
         val apiKey = intent?.getStringExtra("apiKey") ?: ""
         val customerID = intent?.getStringExtra("customerID") ?: ""
+        val verificationGroupID = intent?.getStringExtra("verificationGroupID") ?: ""
 //        val token = intent?.getStringExtra("token") ?: ""
 //        val refreshToken = intent?.getStringExtra("refreshToken") ?: ""
 
         Log.d("LocationService", "saveTokensAndPreferences apikey: $apiKey")
         Log.d("LocationService", "saveTokensAndPreferences customerID: $customerID")
+        Log.d(
+            "LocationService",
+            "saveTokensAndPreferences verificationGroupID: $verificationGroupID"
+        )
 //        Log.d("LocationService", "saveTokensAndPreferences token: $token")
 //        Log.d("LocationService", "saveTokensAndPreferences refreshToken: $refreshToken")
 
@@ -374,6 +379,7 @@ class LocationForegroundService : Service() {
 //            putString("token", token)
 //            putString("refreshToken", refreshToken)
             putString("customerID", customerID)
+            putString("verificationGroupID", verificationGroupID)
         }
 
         // Add try-catch and detailed logging for TokenManager calls
@@ -392,6 +398,10 @@ class LocationForegroundService : Service() {
 
             Log.d("LocationService", "About to call tokenManager.saveCustomerID")
             tokenManager.saveCustomerID(customerID)
+            Log.d("LocationService", "Completed tokenManager.saveCustomerID")
+
+            Log.d("LocationService", "About to call tokenManager.saveVerificationGroupID")
+            tokenManager.saveVerificationGroupID(verificationGroupID)
             Log.d("LocationService", "Completed tokenManager.saveCustomerID")
 
         } catch (e: Exception) {
@@ -489,7 +499,11 @@ class LocationForegroundService : Service() {
 
     private suspend fun getPendingVerification(tokens: TokenBundle): CustomerAddressHistoryData? {
         Log.d("LocationService", "getPendingVerification tokens: $tokens")
-        val response = apiHelper.fetchCustomerHistory(tokens.apiKey, tokens.customerID)
+        val response = apiHelper.fetchCustomerHistory(
+            tokens.apiKey,
+            tokens.customerID,
+            verificationGroupId = tokens.customerID
+        )
         if (!response.isSuccessful || response.body() == null) {
             val errorBody = response.errorBody()?.string()
             Log.e(
@@ -590,7 +604,8 @@ class LocationForegroundService : Service() {
             var allSent = true
             for (cached in cachedGeoTags) {
                 try {
-                    val response = apiHelper.addGeoTag(tokens.apiKey, /*tokens.accessToken,*/ cached)
+                    val response =
+                        apiHelper.addGeoTag(tokens.apiKey, /*tokens.accessToken,*/ cached)
                     if (!response.isSuccessful) {
                         allSent = false
                         break

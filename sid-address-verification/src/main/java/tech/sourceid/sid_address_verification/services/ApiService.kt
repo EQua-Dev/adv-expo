@@ -26,6 +26,7 @@ interface ApiService {
 //        @Header("x-auth-token") token: String,
         @Header("customer") customerID: String,
         @Header("x-api-key") apiKey: String,
+        @Header("verificationGroupId") verificationGroupId: String,
     ): Response<CustomerAddressHistoryResponse>
 
     @POST("customer/add-geotag")
