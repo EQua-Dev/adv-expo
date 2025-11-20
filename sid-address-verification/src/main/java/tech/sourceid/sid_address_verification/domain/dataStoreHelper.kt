@@ -11,6 +11,7 @@ fun cacheGeoTag(context: Context, geoTag: AddGeoTagRequest) {
     val sharedPrefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     val cached = sharedPrefs.getStringSet(KEY_CACHED_TAGS, mutableSetOf())?.toMutableSet() ?: mutableSetOf()
     cached.add(JSONObject().apply {
+        put("customer", geoTag.customer)
         put("address", geoTag.address)
         put("latitude", geoTag.latitude)
         put("longitude", geoTag.longitude)
@@ -28,6 +29,7 @@ fun getCachedGeoTags(context: Context): List<AddGeoTagRequest> {
         try {
             val json = JSONObject(it)
             AddGeoTagRequest(
+                customer = json.getString("customer"),
                 address = json.getString("address"),
                 latitude = json.getDouble("latitude"),
                 longitude = json.getDouble("longitude"),
