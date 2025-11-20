@@ -353,14 +353,14 @@ class LocationForegroundService : Service() {
 
     private fun saveTokensAndPreferences(intent: Intent?) {
         val apiKey = intent?.getStringExtra("apiKey") ?: ""
-        val customerID = intent?.getStringExtra("customer") ?: ""
-        val token = intent?.getStringExtra("token") ?: ""
-        val refreshToken = intent?.getStringExtra("refreshToken") ?: ""
+        val customerID = intent?.getStringExtra("customerID") ?: ""
+//        val token = intent?.getStringExtra("token") ?: ""
+//        val refreshToken = intent?.getStringExtra("refreshToken") ?: ""
 
         Log.d("LocationService", "saveTokensAndPreferences apikey: $apiKey")
         Log.d("LocationService", "saveTokensAndPreferences customerID: $customerID")
-        Log.d("LocationService", "saveTokensAndPreferences token: $token")
-        Log.d("LocationService", "saveTokensAndPreferences refreshToken: $refreshToken")
+//        Log.d("LocationService", "saveTokensAndPreferences token: $token")
+//        Log.d("LocationService", "saveTokensAndPreferences refreshToken: $refreshToken")
 
         // Check if tokenManager is initialized
 //        if (!::tokenManager.isInitialized) {
@@ -371,19 +371,19 @@ class LocationForegroundService : Service() {
         val prefs = getSharedPreferences("GeoPrefs", Context.MODE_PRIVATE)
         prefs.edit {
             putString("apiKey", apiKey)
-            putString("token", token)
-            putString("refreshToken", refreshToken)
+//            putString("token", token)
+//            putString("refreshToken", refreshToken)
             putString("customerID", customerID)
         }
 
         // Add try-catch and detailed logging for TokenManager calls
         try {
             Log.d("LocationService", "About to call tokenManager.saveAccessToken")
-            tokenManager.saveAccessToken(token)
+//            tokenManager.saveAccessToken(token)
             Log.d("LocationService", "Completed tokenManager.saveAccessToken")
 
             Log.d("LocationService", "About to call tokenManager.saveRefreshToken")
-            tokenManager.saveRefreshToken(refreshToken)
+//            tokenManager.saveRefreshToken(refreshToken)
             Log.d("LocationService", "Completed tokenManager.saveRefreshToken")
 
             Log.d("LocationService", "About to call tokenManager.saveApiKey")
@@ -489,7 +489,7 @@ class LocationForegroundService : Service() {
 
     private suspend fun getPendingVerification(tokens: TokenBundle): CustomerAddressHistoryData? {
         Log.d("LocationService", "getPendingVerification tokens: $tokens")
-        val response = apiHelper.fetchCustomerHistory(tokens.apiKey, tokens.accessToken)
+        val response = apiHelper.fetchCustomerHistory(tokens.apiKey, tokens.customerID)
         if (!response.isSuccessful || response.body() == null) {
             val errorBody = response.errorBody()?.string()
             Log.e(
@@ -581,6 +581,7 @@ class LocationForegroundService : Service() {
             address = address,
             latitude = location.latitude,
             longitude = location.longitude,
+            customer = tokens.customerID,
             deviceTimestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
         )
 
@@ -589,7 +590,7 @@ class LocationForegroundService : Service() {
             var allSent = true
             for (cached in cachedGeoTags) {
                 try {
-                    val response = apiHelper.addGeoTag(tokens.apiKey, tokens.accessToken, cached)
+                    val response = apiHelper.addGeoTag(tokens.apiKey, /*tokens.accessToken,*/ cached)
                     if (!response.isSuccessful) {
                         allSent = false
                         break
@@ -603,7 +604,7 @@ class LocationForegroundService : Service() {
             if (allSent) clearCachedGeoTags(context)
 
             try {
-                val response = apiHelper.addGeoTag(tokens.apiKey, tokens.accessToken, geoTag)
+                val response = apiHelper.addGeoTag(tokens.apiKey, /*tokens.accessToken,*/ geoTag)
                 if (response.isSuccessful) {
                     Log.d("LocationService", "Location sent successfully")
                     withContext(Dispatchers.Main) {

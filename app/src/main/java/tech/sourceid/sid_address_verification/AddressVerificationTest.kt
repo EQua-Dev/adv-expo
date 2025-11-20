@@ -29,10 +29,13 @@ fun AddressVerificationTest() {
             val refreshToken =
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OGZhNTcwMzU2ZDczNmRjOTcyY2RhNyIsIm9yZ2FuaXphdGlvbiI6IjY3Y2I2ODM5ODM2ZWYyNmNmZjVjZmVlYSIsImlhdCI6MTc1NTE4NDczMywiZXhwIjoxNzU3Nzc2NzMzfQ.VIfGSwcl6zzqKCvG0CZiqBBUyJQpZZoi-7R3uJpvyX4"
 
+            val customerID = ""
+
             AddressVerification(context).startLocationTracking(
                 apiKey = apiKey,
-                token = token,
-                refreshToken = refreshToken
+                customerID = customerID
+//                token = token,
+//                refreshToken = refreshToken
             ) { lng, lat ->
 
             }
@@ -40,8 +43,9 @@ fun AddressVerificationTest() {
             Button(onClick = {
                 AddressVerification(context).startLocationTracking(
                     apiKey = apiKey,
-                    token = token,
-                    refreshToken = refreshToken
+                    customerID = customerID,
+//                    token = token,
+//                    refreshToken = refreshToken
                 ) { lng, lat ->
                     Toast.makeText(context, "longitude: $lng, latitude: $lat", Toast.LENGTH_LONG)
                         .show()

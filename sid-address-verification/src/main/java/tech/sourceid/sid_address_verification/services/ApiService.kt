@@ -23,13 +23,14 @@ interface ApiService {
 
     @GET("customer/address-history")
     suspend fun fetchCustomerHistory(
-        @Header("x-auth-token") token: String,
+//        @Header("x-auth-token") token: String,
+        @Header("customer") customerID: String,
         @Header("x-api-key") apiKey: String,
     ): Response<CustomerAddressHistoryResponse>
 
     @POST("customer/add-geotag")
     suspend fun addGeoTag(
-        @Header("x-auth-token") token: String,
+//        @Header("x-auth-token") token: String,
         @Header("x-api-key") apiKey: String,
         @Body postBody: AddGeoTagRequest
     ): Response<AddGeoTagResponse>

@@ -19,17 +19,18 @@ class ApiHelper(private val apiService: ApiService) {
 
     suspend fun fetchCustomerHistory(
         apiKey: String,
-        token: String,
+        customerID: String,
     ): Response<CustomerAddressHistoryResponse> {
-        return apiService.fetchCustomerHistory(token = token, apiKey = apiKey)
+        return apiService.fetchCustomerHistory(customerID = customerID, apiKey = apiKey)
     }
 
     suspend fun addGeoTag(
         apiKey: String,
-        token: String,
+//        token: String,
+//        customerID: String,
         request: AddGeoTagRequest
     ): Response<AddGeoTagResponse> {
-        return apiService.addGeoTag(token = token, apiKey = apiKey, postBody = request)
+        return apiService.addGeoTag( apiKey = apiKey, postBody = request)
     }
 
     suspend fun refreshToken(

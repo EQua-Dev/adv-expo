@@ -38,13 +38,16 @@ class AddressVerification(private val context: Context) {
 
     fun startLocationTracking(
         apiKey: String,
-        token: String,
-        refreshToken: String,
+        customerID: String,
+//        token: String,
+//        refreshToken: String,
         onLocationPost: (Double, Double) -> Unit
     ) {
-        Log.d("AddressVerification", "startLocationTracking: internal first start tracking \n \"apiKey: $apiKey, refresh: $refreshToken,")
-        Log.d("AddressVerification", "apiKey: $apiKey, refresh: $refreshToken, token: $token")
-        locationTracking.startTracking(apiKey, token, refreshToken, onLocationPost)
+//        Log.d("AddressVerification", "startLocationTracking: internal first start tracking \n \"apiKey: $apiKey,/* refresh: $refreshToken,*/")
+//        Log.d("AddressVerification", "apiKey: $apiKey, refresh: $refreshToken, token: $token")
+        Log.d("AddressVerification", "apiKey: $apiKey, customerID: $customerID")
+        locationTracking.startTracking(apiKey, customerID, onLocationPost)
+//        locationTracking.startTracking(apiKey, token, refreshToken, onLocationPost)
     }
 
     fun stopLocationTracking() {
