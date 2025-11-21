@@ -402,7 +402,7 @@ class LocationForegroundService : Service() {
 
             Log.d("LocationService", "About to call tokenManager.saveVerificationGroupID")
             tokenManager.saveVerificationGroupID(verificationGroupID)
-            Log.d("LocationService", "Completed tokenManager.saveCustomerID")
+            Log.d("LocationService", "Completed tokenManager.saveVerificationGroupID")
 
         } catch (e: Exception) {
             Log.e("LocationService", "Error calling TokenManager methods", e)
@@ -451,9 +451,20 @@ class LocationForegroundService : Service() {
                 }
 
                 val captureTimestamps = generateCaptureTimestamps(currentTime, config)
+                Log.d("LocationService", "Generated ${captureTimestamps.size} timestamps:")
+
+                captureTimestamps.forEachIndexed { index, ts ->
+                    val readable = Instant.ofEpochMilli(ts)
+                        .atZone(java.time.ZoneId.systemDefault())
+                        .toLocalDateTime()
+
+                    Log.d("LocationService", "[$index] $readable  ($ts)")
+                }
+
 
                 for (ts in captureTimestamps) {
                     handleGeoTagTimestamp(ts, tokens, context)
+                    Log.d("LocationService", "launchGeoTaggingJob: $ts")
                 }
 
             } catch (e: Exception) {
@@ -535,6 +546,7 @@ class LocationForegroundService : Service() {
             ?: System.currentTimeMillis()
     }
 
+/*
     private fun generateCaptureTimestamps(
         startTimestamp: Long,
         config: OrganisationConfigData
@@ -553,6 +565,36 @@ class LocationForegroundService : Service() {
 
         return timestamps
     }
+*/
+
+    private fun generateCaptureTimestamps(startTimestamp: Long, config: OrganisationConfigData): List<Long> {
+
+        val devMode = false
+
+        val intervalMs = if (devMode) {
+            1 * 60 * 1000L   // 1 minutes
+        } else {
+            (config.geotaggingPollingInterval * 60 * 60 * 1000).toLong()
+        }
+
+        val durationMs = if (devMode) {
+            10 * 60 * 1000L   // generate ~5 timestamps for testing
+        } else {
+            (config.geotaggingSessionTimeout * 24 * 60 * 60 * 1000).toLong()
+        }
+
+        val timestamps = mutableListOf<Long>()
+        var current = startTimestamp
+        val endTime = startTimestamp + durationMs
+
+        while (current <= endTime) {
+            timestamps.add(current)
+            current += intervalMs
+        }
+
+        return timestamps
+    }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun handleGeoTagTimestamp(
@@ -560,13 +602,23 @@ class LocationForegroundService : Service() {
         tokens: TokenBundle,
         context: Context
     ) {
-        val waitTime = timestamp - System.currentTimeMillis()
+  /*      val waitTime = timestamp - System.currentTimeMillis()
         val roundedWaitTime = ((waitTime + 59_999) / 60_000) * 60_000
 
         if (roundedWaitTime > 0) {
             Log.d("LocationService", "Delaying for $roundedWaitTime ms")
             delay(roundedWaitTime)
+        }*/
+
+        val waitTime = timestamp - System.currentTimeMillis()
+
+        if (waitTime > 0) {
+            Log.d("LocationService", "Delaying EXACT wait time: $waitTime ms")
+            delay(waitTime)
         }
+
+        Log.d("LocationService", "handleGeoTagTimestamp: Past wait code")
+
 
         if (ActivityCompat.checkSelfPermission(
                 context,
@@ -595,6 +647,7 @@ class LocationForegroundService : Service() {
             parsedAddress.zipCode
         ).joinToString(" ").ifBlank { "Unknown Location" }
 
+
         val geoTag = AddGeoTagRequest(
             address = address,
             latitude = location.latitude,
@@ -603,8 +656,13 @@ class LocationForegroundService : Service() {
             deviceTimestamp = DateTimeFormatter.ISO_INSTANT.format(Instant.now())
         )
 
+        Log.d("LocationService", "handleGeoTagTimestamp: geoTag is $geoTag")
+
+
         if (isInternetAvailable(context)) {
+
             val cachedGeoTags = getCachedGeoTags(context)
+            Log.d("LocationService", "handleGeoTagTimestamp: $cachedGeoTags")
             var allSent = true
             for (cached in cachedGeoTags) {
                 try {

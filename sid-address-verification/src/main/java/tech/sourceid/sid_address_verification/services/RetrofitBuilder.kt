@@ -24,8 +24,8 @@ object RetrofitBuilder {
     private val okHttpClient by lazy {
         OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor) // ✅ Log requests/responses
-            .addInterceptor(TokenInterceptor(tokenManager))
-            .authenticator(TokenAuthenticator(tokenManager))
+//            .addInterceptor(TokenInterceptor(tokenManager))
+//            .authenticator(TokenAuthenticator(tokenManager))
             .build()
     }
 

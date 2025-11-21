@@ -120,6 +120,8 @@ class LocationTracking(private val context: Context) {
         onLocationPost: (Double, Double) -> Unit
     ) {
 
+        Log.d("AddressVerification", "startLocationTrackingInternal: apiKey: $apiKey, customerID: $customerID, verificationGroupID: $verificationGroupID, interval: $interval, duration: $duration")
+
         val intent = Intent(context, LocationForegroundService::class.java).apply {
             putExtra("interval", interval)
             putExtra("duration", duration)

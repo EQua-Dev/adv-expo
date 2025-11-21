@@ -6,6 +6,7 @@ import android.content.Context
 import android.location.Address
 import android.location.Geocoder
 import android.net.ConnectivityManager
+import android.util.Log
 import androidx.annotation.RequiresPermission
 import tech.sourceid.sid_address_verification.data.ParsedAddress
 import java.util.Locale
@@ -19,6 +20,8 @@ object HelpMe {
         val geocoder = Geocoder(context, Locale.getDefault())
         return try {
             val addresses: MutableList<Address>? = geocoder.getFromLocation(latitude, longitude, 1)
+
+            Log.d("LocationService", "getParsedAddressFromCoordinates: $geocoder")
             if (addresses?.isNotEmpty() == true) {
                 val address = addresses[0]
                 ParsedAddress(

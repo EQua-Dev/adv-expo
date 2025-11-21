@@ -5,6 +5,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
+import retrofit2.http.Query
 import tech.sourceid.sid_address_verification.data.requests.AddGeoTagRequest
 import tech.sourceid.sid_address_verification.data.requests.RefreshTokenRequest
 import tech.sourceid.sid_address_verification.data.responses.AddGeoTagResponse
@@ -24,9 +25,10 @@ interface ApiService {
     @GET("customer/address-history")
     suspend fun fetchCustomerHistory(
 //        @Header("x-auth-token") token: String,
-        @Header("customer") customerID: String,
+        @Query("customer") customerID: String,
+
         @Header("x-api-key") apiKey: String,
-        @Header("verificationGroupId") verificationGroupId: String,
+        @Query("verificationGroupId") verificationGroupId: String,
     ): Response<CustomerAddressHistoryResponse>
 
     @POST("customer/add-geotag")

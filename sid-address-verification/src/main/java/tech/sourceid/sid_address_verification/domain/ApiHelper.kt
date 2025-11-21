@@ -1,5 +1,6 @@
 package tech.sourceid.sid_address_verification.domain
 
+import android.util.Log
 import retrofit2.Response
 import tech.sourceid.sid_address_verification.data.requests.AddGeoTagRequest
 import tech.sourceid.sid_address_verification.data.requests.RefreshTokenRequest
@@ -22,6 +23,9 @@ class ApiHelper(private val apiService: ApiService) {
         customerID: String,
         verificationGroupId: String,
     ): Response<CustomerAddressHistoryResponse> {
+
+        Log.d("LocationService", "fetchCustomerHistory: verification group id is $verificationGroupId")
+
         return apiService.fetchCustomerHistory(
             customerID = customerID,
             apiKey = apiKey,
