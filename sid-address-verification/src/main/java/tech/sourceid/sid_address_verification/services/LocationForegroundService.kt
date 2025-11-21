@@ -488,13 +488,17 @@ class LocationForegroundService : Service() {
         val customerID = tokenManager.getCustomerID().takeIf { !it.isNullOrBlank() }
             ?: geoPrefs.getString("customerID", "") ?: ""
 
+     val verificationGroupID = tokenManager.getVerificationGroupID().takeIf { !it.isNullOrBlank() }
+            ?: geoPrefs.getString("verificationGroupID", "") ?: ""
+
 
         Log.d("LocationService", "saveTokensAndPreferences apikey2: $apiKey")
         Log.d("LocationService", "saveTokensAndPreferences customerID2: $customerID")
         Log.d("LocationService", "saveTokensAndPreferences token2: $accessToken")
+        Log.d("LocationService", "saveTokensAndPreferences verificationGroupID2: $verificationGroupID")
 //        Log.d("LocationService", "saveTokensAndPreferences refreshToken2: $refreshToken")
 
-        return TokenBundle(apiKey, accessToken, customerID)
+        return TokenBundle(apiKey, accessToken, customerID, verificationGroupID)
     }
 
     private suspend fun getPendingVerification(tokens: TokenBundle): CustomerAddressHistoryData? {
@@ -502,7 +506,7 @@ class LocationForegroundService : Service() {
         val response = apiHelper.fetchCustomerHistory(
             tokens.apiKey,
             tokens.customerID,
-            verificationGroupId = tokens.customerID
+            verificationGroupId = tokens.verificationGroupID
         )
         if (!response.isSuccessful || response.body() == null) {
             val errorBody = response.errorBody()?.string()
