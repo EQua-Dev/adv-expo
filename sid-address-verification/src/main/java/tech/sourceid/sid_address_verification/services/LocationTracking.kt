@@ -9,6 +9,7 @@ import android.util.Log
 import kotlinx.coroutines.*
 import org.json.JSONObject
 import tech.sourceid.sid_address_verification.data.AddressVerificationConfig
+import tech.sourceid.sid_address_verification.domain.ApiHelper
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -40,34 +41,54 @@ fun startLocationTracking(
 }
 
 
-class LocationTracking(private val context: Context) {
+class LocationTracking(
+    private val context: Context
+) {
 
     private var trackingJob: Job? = null
+    private fun api(apiKey: String): ApiHelper {
+        return ApiHelper(RetrofitBuilder.create(apiKey))
+    }
+
 
     suspend fun fetchConfig(apiKey: String): AddressVerificationConfig {
         return withContext(Dispatchers.IO) {
-            val url = URL("https://api.rd.usesourceid.com/v1/api/organization/address-verification-config")
-            val connection = (url.openConnection() as HttpURLConnection).apply {
-                requestMethod = "GET"
-                setRequestProperty("accept", "*/*")
-                setRequestProperty("x-api-key", apiKey)
+            try {
+                val api = api(apiKey)
+                val response = api.fetchOrganisationConfig(apiKey)
+
+                if (!response.isSuccessful) {
+                    Log.e(
+                        "LocationTracking",
+                        "fetchConfig error: ${response.code()} ${response.message()}"
+                    )
+                    throw Exception("Failed to fetch config")
+                }
+
+
+                val body = response.body()
+                val data = body?.data
+
+                Log.d("LocationTracking", "Config response: $data")
+
+                val interval = data?.geotaggingPollingInterval
+                    ?.takeIf { it != 0.0 } ?: 0.5
+
+                val duration = data?.geotaggingPollingInterval
+                    ?.takeIf { it != 0.0 } ?: 1.0
+
+//                AddressVerificationConfig(interval, duration)
+                AddressVerificationConfig(locationFetchIntervalHours = interval, locationFetchDurationDays = duration.toDouble() )
+
+            } catch (e: Exception) {
+                Log.e("LocationTracking", "fetchConfig exception: ${e.localizedMessage}")
+
+                // fallback values
+                AddressVerificationConfig(
+                    locationFetchIntervalHours = 0.5,
+                    locationFetchDurationDays = 1.0
+                )
             }
-
-            val response = connection.inputStream.bufferedReader().use { it.readText() }
-            val json = JSONObject(response)
-            val data = json.getJSONObject("data")
-
-            Log.d("LocationTracking", "fetchConfig: ${data}")
-
-            val interval = data.optDouble("geotaggingPollingInterval")
-                .takeIf { !it.isNaN() && it != 0.0 } ?: 0.5
-
-            val duration = data.optInt("geotaggingSessionTimeout").takeIf { it != 0 } ?: 1
-
-            AddressVerificationConfig(
-                locationFetchIntervalHours = interval,
-                locationFetchDurationDays = duration.toDouble()
-            )
         }
     }
 
@@ -120,7 +141,10 @@ class LocationTracking(private val context: Context) {
         onLocationPost: (Double, Double) -> Unit
     ) {
 
-        Log.d("AddressVerification", "startLocationTrackingInternal: apiKey: $apiKey, customerID: $customerID, verificationGroupID: $verificationGroupID, interval: $interval, duration: $duration")
+        Log.d(
+            "AddressVerification",
+            "startLocationTrackingInternal: apiKey: $apiKey, customerID: $customerID, verificationGroupID: $verificationGroupID, interval: $interval, duration: $duration"
+        )
 
         val intent = Intent(context, LocationForegroundService::class.java).apply {
             putExtra("interval", interval)

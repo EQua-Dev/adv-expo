@@ -1,9 +1,6 @@
 package tech.sourceid.sid_address_verification.services.tokenmanager
 
 import android.content.Context
-import tech.sourceid.sid_address_verification.data.requests.RefreshTokenRequest
-import tech.sourceid.sid_address_verification.domain.ApiHelper
-import tech.sourceid.sid_address_verification.services.RetrofitBuilder
 import androidx.core.content.edit
 import android.util.Log
 

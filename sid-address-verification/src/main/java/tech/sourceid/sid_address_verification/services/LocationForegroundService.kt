@@ -309,8 +309,11 @@ class LocationForegroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         AppContextHolder.init(this)
 
+        val apiKey = intent?.getStringExtra("apiKey") ?: ""
+        apiHelper = ApiHelper(RetrofitBuilder.create(apiKey))
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        apiHelper = ApiHelper((RetrofitBuilder.apiService))
+//        apiHelper = ApiHelper((RetrofitBuilder.apiService))
 //        tokenManager = TokenManager(this)
 
         saveTokensAndPreferences(intent)
@@ -499,7 +502,7 @@ class LocationForegroundService : Service() {
         val customerID = tokenManager.getCustomerID().takeIf { !it.isNullOrBlank() }
             ?: geoPrefs.getString("customerID", "") ?: ""
 
-     val verificationGroupID = tokenManager.getVerificationGroupID().takeIf { !it.isNullOrBlank() }
+        val verificationGroupID = tokenManager.getVerificationGroupID().takeIf { !it.isNullOrBlank() }
             ?: geoPrefs.getString("verificationGroupID", "") ?: ""
 
 

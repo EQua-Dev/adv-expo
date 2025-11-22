@@ -1,5 +1,6 @@
 package tech.sourceid.sid_address_verification
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,9 +22,10 @@ fun AddressVerificationTest() {
         contentAlignment = Alignment.Center
     ) {
         Column {
-            Text(text = "AddressVerificationTest")
+            Text(text = "AddressVerification Test")
 
-            val apiKey = "sk_rd_v1_ChoPcUQjtI9pMTivjYJ9hKXop0WeXO"
+            val apiKey = "sk_sbx_v1_bH5YB6dIlQHoOeyFjgapq6KAc0OddJ"
+//            val apiKey = "sk_rd_v1_ChoPcUQjtI9pMTivjYJ9hKXop0WeXO"
             val token =
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OTZlZjk3NDY0YWI2ODBiMjZiMzJmZCIsImVtYWlsIjoibHVvbXk1MisyQGdtYWlsLmNvbSIsInR5cGUiOiJDdXN0b21lciIsImlhdCI6MTc1NDcyMjI0NCwiZXhwIjoxNzU0ODA4NjQ0fQ.y4362If1lBDiwmKwU0or5p4ZshESFSJ8Rils5vsfhyE"
             val refreshToken =
@@ -43,6 +45,7 @@ fun AddressVerificationTest() {
             }
 */
             Button(onClick = {
+                Log.d("TAG", "AddressVerificationTest: $apiKey")
                 AddressVerification(context).startLocationTracking(
                     apiKey = apiKey,
                     customerID = customerID,

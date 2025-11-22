@@ -28,7 +28,7 @@ interface ApiService {
         @Query("customer") customerID: String,
 
         @Header("x-api-key") apiKey: String,
-        @Query("verificationGroupId") verificationGroupId: String,
+        @Query("verificationGroup") verificationGroupId: String,
     ): Response<CustomerAddressHistoryResponse>
 
     @POST("customer/add-geotag")
