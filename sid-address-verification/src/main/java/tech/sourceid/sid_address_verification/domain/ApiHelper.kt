@@ -15,6 +15,7 @@ class ApiHelper(private val apiService: ApiService) {
     suspend fun fetchOrganisationConfig(
         apiKey: String,
     ): Response<GetOrganisationConfigResponse> {
+        Log.d("LocationService", "fetchOrganisationConfig: $apiKey")
         return apiService.fetchOrganisationConfig(apiKey)
     }
 
