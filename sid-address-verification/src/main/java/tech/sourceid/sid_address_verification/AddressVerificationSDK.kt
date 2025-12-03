@@ -29,6 +29,15 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import tech.sourceid.sid_address_verification.data.AddressVerificationConfig
 import tech.sourceid.sid_address_verification.services.startLocationTracking
 
+internal object AddressVerificationInternal {
+    var pickLocationCallback: ((Double, Double, String) -> Unit)? = null
+
+    fun sendPickedLocation(lat: Double, lng: Double, address: String) {
+        pickLocationCallback?.invoke(lat, lng, address)
+        pickLocationCallback = null
+    }
+}
+
 @Composable
 fun AddressVerificationSDK(
     config: AddressVerificationConfig,

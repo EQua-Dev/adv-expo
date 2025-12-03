@@ -4,13 +4,16 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 
 
 @Composable
@@ -36,16 +39,16 @@ fun AddressVerificationTest() {
 //            val verificationGroupID = "689209fc5679c2b5c30e19e4"
             val verificationGroupID = "68f0dc57f80227c0891a060e"
 
-      /*      AddressVerification(context).startLocationTracking(
-                apiKey = apiKey,
-                customerID = customerID,
-                verificationGroupID = verificationGroupID
-//                token = token,
-//                refreshToken = refreshToken
-            ) { lng, lat ->
+            /*      AddressVerification(context).startLocationTracking(
+                      apiKey = apiKey,
+                      customerID = customerID,
+                      verificationGroupID = verificationGroupID
+      //                token = token,
+      //                refreshToken = refreshToken
+                  ) { lng, lat ->
 
-            }
-*/
+                  }
+      */
             Button(onClick = {
                 Log.d("TAG", "AddressVerificationTest: $apiKey")
                 AddressVerification(context).startLocationTracking(
@@ -61,6 +64,21 @@ fun AddressVerificationTest() {
             }) {
                 Text("Start Tracking")
             }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Button(onClick = {
+                AddressVerification(context).pickLocation { lat, lng, address ->
+                    Toast.makeText(
+                        context,
+                        "Picked: $lat, $lng\n$address",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }) {
+                Text("Pick Location")
+            }
+
         }
     }
 }

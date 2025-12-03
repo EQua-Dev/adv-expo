@@ -35,7 +35,12 @@
             </intent-filter>
         </receiver>
 
+        <activity android:name=".services.LocationPickerActivity"
+            android:exported="true"/>
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyA5uK905A9ZFRdMrBaep_sl-jJgPhhCeOI"/>
     </application>
 
 </manifest>

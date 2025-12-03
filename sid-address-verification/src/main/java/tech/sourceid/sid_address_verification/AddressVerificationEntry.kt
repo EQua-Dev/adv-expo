@@ -1,6 +1,7 @@
 package tech.sourceid.sid_address_verification
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,6 +23,7 @@ import com.google.android.libraries.places.api.net.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import tech.sourceid.sid_address_verification.services.LocationPickerActivity
 import tech.sourceid.sid_address_verification.services.LocationTracking
 import tech.sourceid.sid_address_verification.services.startLocationTracking
 import java.net.HttpURLConnection
@@ -62,6 +64,15 @@ class AddressVerification(private val context: Context) {
             geotaggingSessionTimeout = 30000L // 30 seconds
         )
     }
+
+    fun pickLocation(onPicked: (Double, Double, String) -> Unit) {
+        AddressVerificationInternal.pickLocationCallback = onPicked
+
+        val intent = Intent(context, LocationPickerActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
+    }
+
 }
 
 @Composable
