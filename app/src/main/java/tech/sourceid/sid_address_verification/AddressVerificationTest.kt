@@ -68,10 +68,10 @@ fun AddressVerificationTest() {
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(onClick = {
-                AddressVerification(context).pickLocation { lat, lng, address ->
+                AddressVerification(context).pickLocation { address ->
                     Toast.makeText(
                         context,
-                        "Picked: $lat, $lng\n$address",
+                        "Picked: ${address.latitude}, ${address.longitude}\n${address.country}\n${address.state}\n${address.city}\n${address.street}\n${address.postalCode}",
                         Toast.LENGTH_LONG
                     ).show()
                 }

@@ -27,13 +27,14 @@ import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import tech.sourceid.sid_address_verification.data.AddressVerificationConfig
+import tech.sourceid.sid_address_verification.data.mappicker.ResolvedAddress
 import tech.sourceid.sid_address_verification.services.startLocationTracking
 
 internal object AddressVerificationInternal {
-    var pickLocationCallback: ((Double, Double, String) -> Unit)? = null
+    var pickLocationCallback: ((ResolvedAddress) -> Unit)? = null
 
-    fun sendPickedLocation(lat: Double, lng: Double, address: String) {
-        pickLocationCallback?.invoke(lat, lng, address)
+    fun sendPickedLocation(resolvedAddress: ResolvedAddress) {
+        pickLocationCallback?.invoke(resolvedAddress)
         pickLocationCallback = null
     }
 }

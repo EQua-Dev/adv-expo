@@ -23,6 +23,7 @@ import com.google.android.libraries.places.api.net.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import tech.sourceid.sid_address_verification.data.mappicker.ResolvedAddress
 import tech.sourceid.sid_address_verification.services.LocationPickerActivity
 import tech.sourceid.sid_address_verification.services.LocationTracking
 import tech.sourceid.sid_address_verification.services.startLocationTracking
@@ -65,7 +66,7 @@ class AddressVerification(private val context: Context) {
         )
     }
 
-    fun pickLocation(onPicked: (Double, Double, String) -> Unit) {
+    fun pickLocation(onPicked: (ResolvedAddress) -> Unit) {
         AddressVerificationInternal.pickLocationCallback = onPicked
 
         val intent = Intent(context, LocationPickerActivity::class.java)

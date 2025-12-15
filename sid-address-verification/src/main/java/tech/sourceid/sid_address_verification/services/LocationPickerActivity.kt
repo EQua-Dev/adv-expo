@@ -14,17 +14,8 @@ class LocationPickerActivity : ComponentActivity() {
 
         setContent {
             LocationPickerScreen(
-                onConfirm = { latLng, address ->
-                    /*   val result = Intent().apply {
-                           putExtra("latitude", latLng.latitude)
-                           putExtra("longitude", latLng.longitude)
-                           putExtra("address", address)
-                       }
-                       setResult(RESULT_OK, result)*/
-
+                onConfirm = { address ->
                     AddressVerificationInternal.sendPickedLocation(
-                        latLng.latitude,
-                        latLng.longitude,
                         address
                     )
                     finish()
