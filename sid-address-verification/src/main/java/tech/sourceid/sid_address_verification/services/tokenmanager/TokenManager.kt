@@ -120,30 +120,5 @@ class TokenManager(context: Context) {
         }
         Log.d("TokenManager", "Access and refresh tokens cleared")
     }
-    /*suspend fun refreshToken(): String? {
-        val refreshToken = getRefreshToken() ?: return null
 
-        return try {
-            val refreshTokenRequest = RefreshTokenRequest(refreshToken)
-
-            val response = apiHelper.refreshToken(request = refreshTokenRequest, apiKey = getApiKey()!!)
-        *//*    ApiHelper Retrofit . Builder ()
-                .baseUrl("https://api.rd.usesourceid.com/v1/api/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(AuthApiService::class.java)
-                .refreshAccessToken(RefreshTokenRequest(refreshToken))
-*//*
-            if (response.isSuccessful) {
-                val newAccessToken = response.body()?.data!!.accessToken
-                run {
-                    saveAccessToken(newAccessToken)
-                    newAccessToken
-                }
-            } else null
-
-        } catch (e: Exception) {
-            null
-        }
-    }*/
 }

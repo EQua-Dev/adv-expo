@@ -9,7 +9,6 @@ class AddressVerificationApp: Application() {
         super.onCreate()
         AppContextHolder.init(this)
 
-        // Replace with your real API key
         Places.initialize(applicationContext, "AIzaSyD61uSS05BewaP-7NZ5LNDSnQ_D0yv-_Dk")
     }
 }
