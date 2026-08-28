@@ -8,6 +8,7 @@ import okhttp3.Response
 import okhttp3.Route
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import tech.sourceid.sid_address_verification.SidEnvironment
 import tech.sourceid.sid_address_verification.data.requests.RefreshTokenRequest
 import tech.sourceid.sid_address_verification.services.ApiService
 
@@ -28,7 +29,7 @@ class TokenAuthenticator(
 
         // Create a separate Retrofit instance without authenticator to avoid recursion
         val refreshRetrofit = Retrofit.Builder()
-            .baseUrl("https://api.rd.usesourceid.com/v1/api/")
+            .baseUrl(SidEnvironment.resolveBaseUrl(apiKey))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 

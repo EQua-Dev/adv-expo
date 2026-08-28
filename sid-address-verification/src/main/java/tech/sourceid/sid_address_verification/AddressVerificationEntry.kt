@@ -107,7 +107,10 @@ fun AddressVerificationField(
         try {
             withContext(Dispatchers.IO) {
                 val url =
-                    URL("https://api.rd.usesourceid.com/v1/api/organization/address-verification-config")
+                    URL(
+                        SidEnvironment.resolveBaseUrl(apiKey) +
+                            "organization/address-verification-config"
+                    )
                 val connection = (url.openConnection() as HttpURLConnection).apply {
                     requestMethod = "GET"
                     setRequestProperty("accept", "*/*")
